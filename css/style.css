@@ -1,0 +1,89 @@
+html {
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+    
+  }
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
+
+  *{
+      margin:0;
+      padding:0;
+  }
+
+  a:link, a:visited{
+      text-decoration: none;
+  }
+
+  .bienvenida{
+      background-color: rgb(18, 127, 190);
+      padding: 20px;
+      color: rgb(247, 247, 247);
+  }
+
+  .item-menu{
+      
+      margin-top: 30px;
+      padding: 20px 40px 10px 40px;
+      border: 1px solid rgb(209, 209, 209);
+      border-radius: 10px;
+      cursor: pointer;
+  }
+
+  /* PACIENTES */
+  .btn-inicio{
+      margin: 15px 0 0 15px;
+  }
+  .btn-agregar{
+      margin-top: 20px;
+  }
+
+  .agregar{
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      background-color: #fff;
+      border: 1px solid rgb(189, 189, 189);
+      border-radius: 5px
+  }
+
+  .agregar form{
+      padding: 10px;
+  }
+
+  
+
+  .no-visible{
+      display: none;
+  }
+
+  .zona-registrados{
+      margin-top: 20px;
+  }
+
+  .zona-registrados table{
+      margin-top: 15px;
+  }
+
+  .fa-trash{
+      cursor: pointer;
+  }
+ 
+ .fa-pencil-alt{
+     cursor: pointer;
+ }
+
+ .fa-long-arrow-alt-left {
+     margin-right: 10px;
+ }
+
+ /* SECCION DE EXAMENES */
+ #cedulas{
+     width: 10%;
+ }
+
+ .zona-examenes{
+     margin-top: 30px;
+ }
