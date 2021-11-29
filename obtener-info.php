@@ -19,4 +19,6 @@ $nombres = $row['nombres'];
 $apellidos = $row['apellidos'];
 $sexo = $row['sexo'];
 $edad = $row['edad'];
+
+
 ?>

@@ -1,11 +1,13 @@
 let edit = false;
 $(document).ready(function() {
-  
-
     mostrarPacientes();
     mostrarCedulas();
-    
     detectarCambio();
+    
+    $('#cedulas').val("-SELECCIONE-").change();
+
+    $('#btn-agregar-examen').prop('disabled', true);
+    
     $(document).on ("click", "#btn-edit-examen", function () {
       var currentRow=$(this).closest("tr"); 
       var id = currentRow.find("td:eq(0)").text();
@@ -29,13 +31,20 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '#btn-send-examen' , function (event) {
-      console.log('enviar');
-      var email = 'test@theearth.com';
-      var subject = 'Circle Around';
-      var emailBody = 'Some blah';
-      window.location = 'mailto:' + email + '?subject=' + subject + '&body=' +   emailBody;
- 
-
+      var currentRow=$(this).closest("tr"); 
+      var id=currentRow.find("td:eq(0)").text(); 
+      console.log(id);
+      $.ajax({
+        url: `datos-correo.php?id=${id}`,
+        type: 'GET',
+        success: function(response){
+          var examen = JSON.parse(response);
+          var email = examen[0].correo;
+          var subject = examen[0].examen;
+          var emailBody = examen[0].contenido;
+          window.open('mailto:' + email + '?subject=' + subject + '&body=' +   emailBody,'_blank');
+        }
+      })
     });
   
 
@@ -62,6 +71,7 @@ $('#btn-cancelar').click(function cancelar(){
     $('#js--form-agregar').addClass('no-visible');
     $('#form-agregar').reset;
     edit = false;
+    $('#error-paciente').addClass('no-visible');
 })
 
 
@@ -89,8 +99,10 @@ $('#form-agregar').submit(function(e){
         if (response == 'Exito'){
             edit = false;
             $('#js--form-agregar').addClass('no-visible');
+            $('#error-paciente').addClass('no-visible');
             mostrarPacientes();
         }else{
+          $('#error-paciente').removeClass('no-visible');
             edit = false;
         }
     });
@@ -139,6 +151,7 @@ $('#form-agregar').submit(function(e){
          console.log(data);
 
          $.post('eliminar-pacientes.php',{cedula},function(response){
+           console.log(response);
            mostrarPacientes();
          })
     }
@@ -210,6 +223,10 @@ $('#form-agregar').submit(function(e){
   //Detectar cuando se cambie la cedula en la seccion de examenes
   function detectarCambio() {
     $('#cedulas').on('change', function (e) {
+      if(!$('#cedulas').val() != "-SELECCIONE-"){
+        console.log("holis");
+        $('#btn-agregar-examen').prop('disabled', false);
+      }
         var cedula = $("option:selected", this).text();
         mostrarExamenes(cedula);
     });
@@ -218,12 +235,12 @@ $('#form-agregar').submit(function(e){
 
   // OBTENER EXAMENES DE CADA PACIENTE
   function mostrarExamenes(cedula){
-    $.ajax({
+    if(cedula != '-SELECCIONE-' && cedula != ""){
+      $.ajax({
         url: `obtener-examenes.php?cedula=${cedula}`,
         type: 'GET',
         success: function(response){
             if(!response === false){
-                console.log(response);
                 let examenes = JSON.parse(response);
                 let template ='';
                 examenes.forEach(examen => {
@@ -244,6 +261,8 @@ $('#form-agregar').submit(function(e){
         }
     
       })
+    }
+    
   }
 
 
@@ -265,6 +284,35 @@ $('#form-agregar').submit(function(e){
   })
 
 
-  //ENVIAR EXAMEN POR CORREO
+//AGREGAR UN NUEVO EXAMEN
+$('#btn-agregar-examen').click(function(){
+  $('#js--form-agregar-examen').removeClass('no-visible');
+}) 
+
+$('#btn-cancelar-examen').click(function(){
+  $('#js--form-agregar-examen').addClass('no-visible');
+  $('#form-agregar-examen')[0].reset();
+})
+
+$('#js--form-agregar-examen').submit(function(e){
+
+  const datos = {
+    'cedula' : $("#cedulas").find(':selected').text(),
+    'examen' : $('#nombre-examen').val()
+  }
+  e.preventDefault();
   
- 
+  $.post('agregar-examen.php',datos, function(response){
+    if (response == 'Exito'){
+      edit = false;
+      $('#js--form-agregar-examen').addClass('no-visible');
+      $('#form-agregar-examen')[0].reset();
+      mostrarExamenes(datos['cedula']);
+  }else{
+    console.log('error');
+  }
+  })
+
+  e.preventDefault();
+})
+

@@ -6,7 +6,6 @@ if(empty($id) || $id == ''){
     die();
 }
 
-$id = $_GET['id'];
 
  include ('obtener-info.php');
 ?>
