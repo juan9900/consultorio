@@ -1,11 +1,13 @@
-<?php
-include 'db.php';
+<?php 
 
-if(isset($_POST['cedula'])){
-    $cedula = $_POST['cedula'];
+include ('db.php');
 
-    $query = "DELETE FROM pacientes WHERE cedula = ?";
-    $stmt = $conn->prepare($query); 
+$id = $_POST['id'];
+$contenido = $_POST['text-contenido'];
+
+
+$query = "UPDATE examenes SET contenido = ? WHERE id = ?";
+$stmt = $conn->prepare($query); 
 
     if ( false===$stmt ) {
         // and since all the following operations need a valid/ready statement object
@@ -14,7 +16,7 @@ if(isset($_POST['cedula'])){
         // but's it's only an example
         die('prepare() failed: ' . htmlspecialchars($conn->error));
     }
-    $bind = $stmt->bind_param('i', $id);
+    $bind = $stmt->bind_param('si', $contenido, $id);
     // Check if bind_param() failed.
     // bind_param() can fail because the number of parameter doesn't match the placeholders
     // in the statement, or there's a type conflict, or ....
@@ -24,7 +26,9 @@ if(isset($_POST['cedula'])){
         exit();
     }
 
-    $exec = $stmt->execute();
+    if ($exec = $stmt->execute()){
+        echo true;
+    }
     
     // Check if execute() failed. 
     // execute() can fail for various reasons. And may it be as stupid as someone tripping over the network cable
@@ -33,6 +37,5 @@ if(isset($_POST['cedula'])){
         error_log('mysqli execute() failed: ');
         error_log( print_r( htmlspecialchars($stmt->error), true ) );
     }
- 
-}
+
 ?>

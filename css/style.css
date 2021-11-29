@@ -87,3 +87,16 @@ html {
  .zona-examenes{
      margin-top: 30px;
  }
+
+ #btn-send-examen{
+     cursor:pointer;
+ }
+
+ /* EDICION DE EXAMEN */
+ .contenido-examen div{
+     margin: 30px;
+ }
+
+ #text-contenido{
+     height: 280px;
+ }

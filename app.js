@@ -1,11 +1,44 @@
 let edit = false;
 $(document).ready(function() {
-    
-    
+  
+
     mostrarPacientes();
     mostrarCedulas();
     
     detectarCambio();
+    $(document).on ("click", "#btn-edit-examen", function () {
+      var currentRow=$(this).closest("tr"); 
+      var id = currentRow.find("td:eq(0)").text();
+      document.location.href = `edicion-examen.php?id=${id}`;
+      $('#examen-cedula').text(id);
+    });
+
+    $(document).on ("click", "#btn-delete-examen", function () {
+      if(confirm('Seguro que deseas eliminar el examen?')){
+        var currentRow=$(this).closest("tr"); 
+        //Obtener el id de la tarea que se quiere eliminar
+           var id=currentRow.find("td:eq(0)").text(); 
+
+           //Hacer la solicitud para eliminar la tarea
+           $.post('eliminar-examen.php',{id},function(response){
+            var cedula = $("#cedulas").find(':selected').text();
+            console.log(cedula);
+            mostrarExamenes(cedula);
+           })
+      }
+    });
+
+    $(document).on('click', '#btn-send-examen' , function (event) {
+      console.log('enviar');
+      var email = 'test@theearth.com';
+      var subject = 'Circle Around';
+      var emailBody = 'Some blah';
+      window.location = 'mailto:' + email + '?subject=' + subject + '&body=' +   emailBody;
+ 
+
+    });
+  
+
 })
 
 $('#menu-pacientes').click(function click(){
@@ -178,8 +211,6 @@ $('#form-agregar').submit(function(e){
   function detectarCambio() {
     $('#cedulas').on('change', function (e) {
         var cedula = $("option:selected", this).text();
-        var valueSelected = this.value;
-        console.log(cedula);
         mostrarExamenes(cedula);
     });
   }
@@ -200,7 +231,7 @@ $('#form-agregar').submit(function(e){
                     <tr>
                       <td>${examen.id}</td> 
                       <td>${examen.examen}</td>
-                      <td class=""><i style="color: red; float: left" id='btn-delete' class="fas fa-trash btn-delete"></i><i id="btn-edit" style="float: right" class="fas fa-pencil-alt"></i></td>
+                      <td class=""><i style="color: red; float: left" id='btn-delete-examen' class="fas fa-trash btn-delete"></i><i id='btn-send-examen' class="fas fa-envelope"></i><i id='btn-edit-examen' style="float: right" class="fas fa-pencil-alt"></i></td>
                     </tr>
                   `;
                 });
@@ -214,4 +245,26 @@ $('#form-agregar').submit(function(e){
     
       })
   }
+
+
+
   
+
+  //GUARDAR EXAMEN
+  $('#form-examen').submit(function(e){
+    console.log($('#form-examen').serialize());
+    $.ajax({
+      type: 'POST',
+      url: 'guardar-examen.php',
+      data: $('#form-examen').serialize(),
+      success: function(response){
+        console.log(response)
+        e.preventDefault();
+      }
+    })
+  })
+
+
+  //ENVIAR EXAMEN POR CORREO
+  
+ 
