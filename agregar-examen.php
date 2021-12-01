@@ -4,10 +4,11 @@ include ('db.php');
 if(isset($_POST['examen']) && isset($_POST['cedula'])){
     $cedula = $_POST['cedula'];
     $examen = $_POST['examen'];
-    //VERIFICAR QUE EL PACIENTE NO ESTE AGREGADO YA
-        $query = "INSERT INTO examenes (examen, cedula) VALUES (?,?)";
+    $contenido = "";
+    
+        $query = "INSERT INTO examenes (examen, cedula, contenido) VALUES (?,?,?)";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("si", $examen, $cedula);
+        $stmt->bind_param("sis", $examen, $cedula, $contenido);
         if($stmt->execute()){
             echo 'Exito';
         exit();

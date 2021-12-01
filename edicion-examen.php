@@ -29,7 +29,7 @@ if(empty($id) || $id == ''){
     <div class="bienvenida">
         <h1 class="text-center text-uppercase m-4"><?php echo $examen ?></h1>
     </div>
-    <a href="examenes.html" class="btn btn-primary btn-inicio" ><i class="fas fa-long-arrow-alt-left"></i>Volver a los examenes</a>
+    <a href="examen.html" class="btn btn-primary btn-inicio" ><i class="fas fa-long-arrow-alt-left"></i>Volver a los examenes</a>
 
     <div class="d-flex flex-row contenido-examen justify-content-center">
         <div>

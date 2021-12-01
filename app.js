@@ -24,7 +24,6 @@ $(document).ready(function() {
            //Hacer la solicitud para eliminar la tarea
            $.post('eliminar-examen.php',{id},function(response){
             var cedula = $("#cedulas").find(':selected').text();
-            console.log(cedula);
             mostrarExamenes(cedula);
            })
       }
@@ -33,7 +32,6 @@ $(document).ready(function() {
     $(document).on('click', '#btn-send-examen' , function (event) {
       var currentRow=$(this).closest("tr"); 
       var id=currentRow.find("td:eq(0)").text(); 
-      console.log(id);
       $.ajax({
         url: `datos-correo.php?id=${id}`,
         type: 'GET',
@@ -51,20 +49,17 @@ $(document).ready(function() {
 })
 
 $('#menu-pacientes').click(function click(){
-    console.log("hiciste click en pacientes");
     document.location.href = 'pacientes.html';
 });
 
 $('#menu-examenes').click(function click(){
-    console.log("hiciste click en examenes");
-    document.location.href = 'examenes.html';
+    document.location.href = 'examen.html';
 });
 
 $('#btn-agregar').click(function agregar(){
     $('#js--form-agregar').removeClass('no-visible');
     $('#js--form-agregar').addClass('active');
     setAction();
-    console.log("mostrando form");
     
 });
 $('#btn-cancelar').click(function cancelar(){
@@ -87,15 +82,11 @@ $('#form-agregar').submit(function(e){
         correo: $('#correo').val()
     };
 
-    console.log('enviando');
-    console.log(datos);
-    console.log(edit);
+    
     let url = edit === false ? 'agregar-paciente.php' : 'editar-paciente.php';
 
-    console.log(url);
 
     $.post(url, datos, function(response) {
-        console.log(response);
         if (response == 'Exito'){
             edit = false;
             $('#js--form-agregar').addClass('no-visible');
@@ -117,23 +108,27 @@ $('#form-agregar').submit(function(e){
       url: 'mostrar-pacientes.php',
       type: 'GET',
       success: function(response){
-        let pacientes = JSON.parse(response);
-        let template ='';
-        pacientes.forEach(paciente => {
-          template += `
-            <tr>
-              <td>${paciente.cedula}</td>          
-              <td>${paciente.nombres}</td> 
-              <td>${paciente.apellidos}</td>
-              <td>${paciente.sexo}</td>
-              <td>${paciente.edad}</td>
-              <td>${paciente.telefono}</td>
-              <td>${paciente.correo}</td>
-              <td class=""><i style="color: red; float: left" id='btn-delete' class="fas fa-trash btn-delete"></i><i id="btn-edit" style="float: right" class="fas fa-pencil-alt"></i></td>
-            </tr>
-          `;
-        });
-        $('#pacientes').html(template);
+        if((!response === false) && (response != null)){
+          let pacientes = JSON.parse(response);
+          let template ='';
+          pacientes.forEach(paciente => {
+            template += `
+              <tr>
+                <td>${paciente.cedula}</td>          
+                <td>${paciente.nombres}</td> 
+                <td>${paciente.apellidos}</td>
+                <td>${paciente.sexo}</td>
+                <td>${paciente.edad}</td>
+                <td>${paciente.telefono}</td>
+                <td>${paciente.correo}</td>
+                <td class=""><i style="color: red; float: left" id='btn-delete' class="fas fa-trash btn-delete"></i><i id="btn-edit" style="float: right" class="fas fa-pencil-alt"></i></td>
+              </tr>
+            `;
+          });
+          $('#pacientes').html(template);
+        }else{
+          $('#pacientes').empty();
+        }
       }
   
     })
@@ -148,10 +143,8 @@ $('#form-agregar').submit(function(e){
     
          var cedula=currentRow.find("td:eq(0)").text(); 
          var data='Cedula: ' + cedula ;
-         console.log(data);
 
          $.post('eliminar-pacientes.php',{cedula},function(response){
-           console.log(response);
            mostrarPacientes();
          })
     }
@@ -188,14 +181,12 @@ $('#form-agregar').submit(function(e){
         $('#agregar').addClass('btn-warning');
         $('#agregar').prop('value','Guardar edicion');
         $('#cedula').prop('disabled',true);
-        console.log(edit);
     }else{
         $('#accion-texto').text('Agregar paciente');
         $('#agregar').removeClass('btn-warning');
         $('#agregar').addClass('btn-success');
         $('#agregar').prop('value','Agregar');
         $('#cedula').prop('disabled',false);
-        console.log(edit);
         $('#form-agregar')[0].reset();
     }
   }
@@ -207,13 +198,13 @@ $('#form-agregar').submit(function(e){
         url: 'mostrar-pacientes.php',
         type: 'GET',
         success: function(response){
-          let pacientes = JSON.parse(response);
-          let template ='';
-          pacientes.forEach(paciente => {
-              console.log(paciente.cedula);
-            $('#cedulas').append(`<option value="${paciente.cedula}">${paciente.cedula}</option>`);
-          });
-          
+          if((!response === false) && (response != null)){
+            let pacientes = JSON.parse(response);
+            let template ='';
+            pacientes.forEach(paciente => {
+              $('#cedulas').append(`<option value="${paciente.cedula}">${paciente.cedula}</option>`);
+            });
+          }
         }
     
       })
@@ -224,7 +215,6 @@ $('#form-agregar').submit(function(e){
   function detectarCambio() {
     $('#cedulas').on('change', function (e) {
       if(!$('#cedulas').val() != "-SELECCIONE-"){
-        console.log("holis");
         $('#btn-agregar-examen').prop('disabled', false);
       }
         var cedula = $("option:selected", this).text();
@@ -254,7 +244,6 @@ $('#form-agregar').submit(function(e){
                 });
                 $('#examenes').html(template);
             }else{
-                console.log('falso');
                 $('#examenes').empty();
             }
           
@@ -271,16 +260,14 @@ $('#form-agregar').submit(function(e){
 
   //GUARDAR EXAMEN
   $('#form-examen').submit(function(e){
-    console.log($('#form-examen').serialize());
     $.ajax({
       type: 'POST',
       url: 'guardar-examen.php',
       data: $('#form-examen').serialize(),
       success: function(response){
-        console.log(response)
-        e.preventDefault();
       }
     })
+    e.preventDefault();
   })
 
 
@@ -300,7 +287,6 @@ $('#js--form-agregar-examen').submit(function(e){
     'cedula' : $("#cedulas").find(':selected').text(),
     'examen' : $('#nombre-examen').val()
   }
-  e.preventDefault();
   
   $.post('agregar-examen.php',datos, function(response){
     if (response == 'Exito'){
@@ -309,7 +295,7 @@ $('#js--form-agregar-examen').submit(function(e){
       $('#form-agregar-examen')[0].reset();
       mostrarExamenes(datos['cedula']);
   }else{
-    console.log('error');
+    console.log(response);
   }
   })
 
